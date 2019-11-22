@@ -41,3 +41,28 @@ def binary_search_2(alist, item):
         if pos == -1:
             return -1
         return mid + 1 + pos
+
+
+def binary_search_3(alist, item):
+    """返回alist中小于x的元素个数
+
+    :param alist:
+    :param item:
+    :return: 0~len(alist)
+    """
+    n = len(alist)
+    if n == 0:
+        return 0
+    if alist[0] >= item:
+        return 0
+    if alist[n-1] < item:
+        return n
+
+    mid = n // 2
+
+    if alist[mid - 1] < item <= alist[mid]:
+        return mid
+    elif item <= alist[mid - 1]:
+        return binary_search_3(alist[:mid - 1], item)
+    else:
+        return mid + 1 + binary_search_3(alist[mid + 1:], item)
