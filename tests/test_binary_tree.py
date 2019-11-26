@@ -14,7 +14,7 @@ class TestBinaryTree(TestCase):
 
     def test_build_binary_tree(self):
         array = [-10, 9, 20, None, None, 15, 7]
-        root = build_binary_tree(array, 0)
+        root = build_binary_tree(array)
         in_order_array = []
         in_order(root, in_order_array)
         array.remove(None)
@@ -23,7 +23,7 @@ class TestBinaryTree(TestCase):
 
     def test_build_binary_tree01(self):
         array = [-10, 9, 20, None, None, 15, 7]
-        root = build_binary_tree(array, 0)
+        root = build_binary_tree(array)
         in_order_array = []
         in_order(root, in_order_array)
         array.remove(None)
