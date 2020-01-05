@@ -22,9 +22,9 @@ def find_k_minist(l1, s, e, l2, s2, e2, k):
 def find_k_minist_one(l, s, e, k):
     cnt = (e - s)/2 + 1
     mid = s + cnt - 1
-    if k == mid:
+    if k == cnt:
         return l[mid]
-    elif k < mid:
+    elif k < cnt:
         return find_k_minist_one(l, s, s + cnt - 1, k)
     else:
         return find_k_minist_one(l, s + cnt, e, k - cnt)
