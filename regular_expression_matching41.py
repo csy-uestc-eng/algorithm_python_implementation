@@ -32,11 +32,12 @@ class DFA:
 
 
 class Solution_DP(object):
-    """DP解法
+    """DP解法,前缀，太难理解
 
     """
     def isMatch(self, s, p):
         len_s, len_p = len(s) + 1, len(p) + 1
+        # match[i][i]：代表s[0:i-1]与p[0:j-1]是否匹配
         match = [[False] * len_p for i in range(len_s)]
         match[0][0] = True
 
@@ -52,6 +53,7 @@ class Solution_DP(object):
 
         for i in range(1, len_s):
             for j in range(1, len_p):
+                # i, j 代表数组中第i，j个数。数组取时需要-1
                 if s[i - 1] == p[j - 1] or p[j - 1] == '.':
                     match[i][j] = match[i - 1][j-1]
                 elif p[j - 1] == '*':
@@ -62,41 +64,56 @@ class Solution_DP(object):
                             # **
                             match[i][j] = match[i][j - 1]
                         elif p[j - 2] != '.':
-                            # [a-z]*
-                            if p[j - 2] != s[i - 1]:
-                                # abb,ac*
-                                match[i][j] = match[i][j-2]
-                            else:
-                                # abb,ab* or aa, a*
-                                for k in range(i, 0, -1):
-                                    if s[k - 1] == p[j - 2]:
-                                        # aa, ab*a*
-                                        if match[k][j-2]:
-                                            match[i][j] = match[k][j-2]
-                                            break
-                                    else:
-                                        match[i][j] = match[k][j-2] or match[i][j]
+                            # a*
+                            # aaa, a*(a*匹配0-n个a)
+                            k = i
+                            while k > 0:
+                                if s[k - 1] == p[j - 2]:
+                                    # aa, ab*a*
+                                    if match[k][j-2]:
+                                        match[i][j] = match[k][j-2]
                                         break
-                                if k == 1 and s[0] == p[j - 2] and not match[i][j]:
-                                    match[i][j] = match[0][j-2]
-                                match[i][j] = match[i][j] or match[i][j - 2]
-
+                                else:
+                                    break
+                                k = k - 1
+                            match[i][j] = match[i][j] or match[i][j-2] or match[k][j-2]
                         else:
                             # .*
                             if j == 2:
                                 match[i][j] = True
                             else:
                                 # ab, ab.* or abcb, ab.*
-                                for k in range(i, 0, -1):
-                                    if s[k - 1] == p[j - 3]:
+                                k = i
+                                while k > 0:
+                                    if s[k - 1] == p[j - 3] or p[j - 3] in ['.', '*']:
                                         if match[k][j-2]:
                                             match[i][j] = True
                                             break
-                                    else:
-                                        match[i][j] = match[i][j] or match[k][j-2]
+                                    k = k - 1
+                                match[i][j] = match[i][j] or match[i][j - 2] or \
+                                              match[k][j - 2]
 
         return match[len_s - 1][len_p - 1]
 
+
+class Solution_DP01(object):
+    """DP解法，后缀
+
+    """
+    def isMatch(self, s, p):
+        # match[i][i]：代表s[i:]与p[j:]是否匹配
+        match = [[False] * (len(p) + 1) for i in range(len(s) + 1)]
+        match[-1][-1] = True
+
+        for i in range(len(s), -1, -1):
+            for j in range(len(p) - 1, -1, -1):
+                first_match = i < len(s) and p[j] in {s[i], '.'}
+                if j + 1 < len(p) and p[j + 1] == '*':
+                    match[i][j] = match[i][j + 2] or first_match and match[i + 1][j]
+                else:
+                    match[i][j] = first_match and match[i+1][j+1]
+
+        return match[0][0]
 
 class Solution(object):
     def isMatch(self, s, p):
